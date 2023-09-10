@@ -1,0 +1,19 @@
+{
+	"name": "doge-don",
+	"description": "dodgy object notation",
+	"version": "0.1.0-1",
+	"main": "lib/index.js",
+	"bin": {
+		"doge-don": "lib/cli.js"
+	},
+	"author": "Prokop Schield",
+	"devDependencies": {
+		"@types/node": ">=16"
+	},
+	"keywords": [],
+	"license": "GPL-3.0-or-later",
+	"types": "./lib/index.d.ts",
+	"directories": {
+		"lib": "lib"
+	}
+}
