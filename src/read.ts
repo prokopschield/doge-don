@@ -4,7 +4,7 @@ import { decode } from "./decode";
 
 export function read(filename: string) {
 	try {
-		decode(
+		return decode(
 			typeof window === "undefined" || typeof localStorage === "undefined"
 				? fs.readFileSync(filename, "utf-8")
 				: localStorage.getItem(filename) || ""
