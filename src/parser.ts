@@ -1,5 +1,17 @@
 import { constants, symbols } from "./symbols";
 
+try {
+	if (!("toJSON" in BigInt.prototype)) {
+		Object.assign(BigInt.prototype, {
+			toJSON() {
+				return String(this);
+			},
+		});
+	}
+} catch {
+	// assigned by another module
+}
+
 export function convert_token<T>(token: string | T) {
 	if (typeof token !== "string" || !token.trim()) {
 		return token;
@@ -12,7 +24,11 @@ export function convert_token<T>(token: string | T) {
 	const number = Number(token);
 
 	if (number === number) {
-		return number;
+		if (String(number) === token || !token.match(/^\d+$/g)) {
+			return number;
+		} else if (token.match(/^\d+$/g)) {
+			return BigInt(token);
+		}
 	}
 
 	return token;
