@@ -83,7 +83,7 @@ export function parse_object(tokens: Array<string | symbol>) {
 				++key_count;
 				keys.push(key);
 				values.push(last);
-			} else {
+			} else if (last) {
 				keys.push(undefined);
 				values.push(last);
 			}
