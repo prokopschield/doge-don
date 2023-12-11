@@ -95,16 +95,24 @@ export function parse_object(tokens: Array<string | symbol>) {
 		}
 
 		if (tokens[0] === symbols["["] || tokens[0] === symbols["{"]) {
-			if (last) {
-				keys.push(undefined);
-				values.push(last);
-				last = "";
-			}
-
-			if (key) {
+			if (!key && last) {
 				++key_count;
+				keys.push(String(last));
+				key = last = "";
+			} else if (key && !last) {
+				++key_count;
+				keys.push(String(key));
+				key = last = "";
+			} else if (key && last) {
+				++key_count;
+				tokens.unshift(last, symbols["=>"]);
 				keys.push(key);
-				key = "";
+				values.push(parse_object(tokens));
+				key = last = "";
+
+				continue;
+			} else {
+				keys.push(undefined);
 			}
 
 			values.push(parse_object(tokens));
