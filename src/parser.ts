@@ -26,7 +26,7 @@ export function convert_token<T>(token: string | T) {
 	if (number === number) {
 		if (String(number) === token || !token.match(/^\d+$/g)) {
 			return number;
-		} else if (token.match(/^\d+$/g)) {
+		} else {
 			return BigInt(token);
 		}
 	}
