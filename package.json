@@ -1,7 +1,7 @@
 {
 	"name": "doge-don",
 	"description": "dodgy object notation",
-	"version": "0.1.0-4",
+	"version": "0.1.0-5",
 	"main": "lib/index.js",
 	"bin": {
 		"doge-don": "lib/cli.js"

@@ -24,17 +24,15 @@ export function* lexer(arg: string) {
 		if (mode === Mode.equals) {
 			mode = Mode.default;
 
+			if (part) {
+				yield part;
+				part = "";
+			}
+
+			yield symbols["=>"];
+
 			if (c === ">") {
-				if (part) {
-					yield part;
-					part = "";
-				}
-
-				yield symbols["=>"];
-
 				continue;
-			} else {
-				part += "=";
 			}
 		}
 
