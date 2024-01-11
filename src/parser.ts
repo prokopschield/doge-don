@@ -1,4 +1,4 @@
-import { constants, symbols } from "./symbols";
+import { constants, symbols, ε, Σ } from "./symbols";
 
 try {
 	if (!("toJSON" in BigInt.prototype)) {
@@ -13,6 +13,10 @@ try {
 }
 
 export function convert_token<T>(token: string | T) {
+	if (typeof token === "symbol" && token === ε) {
+		return "";
+	}
+
 	if (typeof token !== "string" || !token.trim()) {
 		return token;
 	}
@@ -37,6 +41,16 @@ export function convert_token<T>(token: string | T) {
 export function parse_object(tokens: Array<string | symbol>) {
 	let remove_bracket = Symbol("");
 
+	const shift_token = (): string | typeof ε => {
+		const token = tokens.shift();
+
+		if (token === ε) {
+			return ε;
+		}
+
+		return String(token || "");
+	};
+
 	if (tokens[0] === symbols["["] || tokens[0] === symbols["{"]) {
 		if (tokens[0] === symbols["["]) {
 			remove_bracket = symbols["]"];
@@ -52,8 +66,8 @@ export function parse_object(tokens: Array<string | symbol>) {
 	const keys = new Array<string | undefined>();
 	const values = new Array<any>();
 
-	let key = "";
-	let last = "";
+	let key: string | typeof ε = "";
+	let last: string | typeof ε = "";
 
 	while (
 		tokens.length &&
@@ -65,7 +79,7 @@ export function parse_object(tokens: Array<string | symbol>) {
 				tokens.unshift(last);
 
 				++key_count;
-				keys.push(key);
+				keys.push(Σ(key));
 				values.push(parse_object(tokens));
 
 				key = last = "";
@@ -81,7 +95,7 @@ export function parse_object(tokens: Array<string | symbol>) {
 		if (tokens[0] === symbols[","]) {
 			if (key) {
 				++key_count;
-				keys.push(key);
+				keys.push(Σ(key));
 				values.push(last);
 			} else if (last) {
 				keys.push(undefined);
@@ -97,16 +111,16 @@ export function parse_object(tokens: Array<string | symbol>) {
 		if (tokens[0] === symbols["["] || tokens[0] === symbols["{"]) {
 			if (!key && last) {
 				++key_count;
-				keys.push(String(last));
+				keys.push(Σ(last));
 				key = last = "";
 			} else if (key && !last) {
 				++key_count;
-				keys.push(String(key));
+				keys.push(Σ(key));
 				key = last = "";
 			} else if (key && last) {
 				++key_count;
 				tokens.unshift(last, symbols["=>"]);
-				keys.push(key);
+				keys.push(Σ(key));
 				values.push(parse_object(tokens));
 				key = last = "";
 
@@ -123,24 +137,24 @@ export function parse_object(tokens: Array<string | symbol>) {
 		if (key) {
 			if (last) {
 				++key_count;
-				keys.push(key);
+				keys.push(Σ(key));
 				values.push(last);
 				key = "";
 			}
-			last = String(tokens.shift());
+			last = shift_token();
 		} else {
 			if (last) {
 				keys.push(undefined);
 				values.push(last);
 			}
 
-			last = String(tokens.shift());
+			last = shift_token();
 		}
 	}
 
 	if (key) {
 		++key_count;
-		keys.push(key);
+		keys.push(Σ(key));
 		values.push(last);
 	} else if (last) {
 		keys.push(undefined);

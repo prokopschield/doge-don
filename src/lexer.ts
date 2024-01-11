@@ -4,6 +4,7 @@ import {
 	simple_escapes,
 	simple_escape_chars,
 	symbols,
+	ε,
 } from "./symbols";
 
 export enum Mode {
@@ -11,8 +12,10 @@ export enum Mode {
 	quotes,
 	escape,
 	escape_unicode,
+	quoted, // string exists, may be ε
 	equals,
-	expect_comma,
+	after_equals_newline_expect_comma,
+	after_equals_newline_comma_expect_expression,
 }
 
 export function* lexer(arg: string) {
@@ -22,17 +25,29 @@ export function* lexer(arg: string) {
 	let uni = "0";
 
 	for (const c of arg) {
-		if (mode === Mode.expect_comma) {
+		if (mode === Mode.after_equals_newline_expect_comma) {
+			if (!c.trim()) {
+				continue;
+			}
+
+			mode = Mode.after_equals_newline_comma_expect_expression;
+
+			yield symbols[","];
+
+			if (c === ",") {
+				continue;
+			}
+		}
+
+		if (mode === Mode.after_equals_newline_comma_expect_expression) {
 			if (!c.trim()) {
 				continue;
 			}
 
 			mode = Mode.default;
 
-			yield symbols[","];
-
-			if (c === ",") {
-				continue;
+			if (c === ":" || c === "=" || ctrlchars.includes(c)) {
+				yield ε;
 			}
 		}
 
@@ -51,8 +66,8 @@ export function* lexer(arg: string) {
 			}
 
 			if (c === "\r" || c === "\n") {
-				yield "";
-				mode = Mode.expect_comma;
+				yield ε;
+				mode = Mode.after_equals_newline_expect_comma;
 				continue;
 			}
 		}
@@ -69,6 +84,18 @@ export function* lexer(arg: string) {
 		}
 
 		switch (mode) {
+			case Mode.quoted: {
+				mode = Mode.default;
+
+				if (!c.trim()) {
+					yield part || ε;
+
+					continue;
+				}
+
+				// fall through
+			}
+
 			case Mode.default: {
 				if (!c.trim()) {
 					if (part) {
@@ -120,7 +147,7 @@ export function* lexer(arg: string) {
 				if (c === "\\" && quote === '"') {
 					mode = Mode.escape;
 				} else if (c === quote) {
-					mode = Mode.default;
+					mode = Mode.quoted;
 				} else {
 					part += c;
 				}
