@@ -12,6 +12,7 @@ export enum Mode {
 	escape,
 	escape_unicode,
 	equals,
+	expect_comma,
 }
 
 export function* lexer(arg: string) {
@@ -21,6 +22,20 @@ export function* lexer(arg: string) {
 	let uni = "0";
 
 	for (const c of arg) {
+		if (mode === Mode.expect_comma) {
+			if (!c.trim()) {
+				continue;
+			}
+
+			mode = Mode.default;
+
+			yield symbols[","];
+
+			if (c === ",") {
+				continue;
+			}
+		}
+
 		if (mode === Mode.equals) {
 			mode = Mode.default;
 
@@ -37,6 +52,7 @@ export function* lexer(arg: string) {
 
 			if (c === "\r" || c === "\n") {
 				yield "";
+				mode = Mode.expect_comma;
 				continue;
 			}
 		}
