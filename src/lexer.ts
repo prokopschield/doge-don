@@ -34,6 +34,11 @@ export function* lexer(arg: string) {
 			if (c === ">") {
 				continue;
 			}
+
+			if (c === "\r" || c === "\n") {
+				yield "";
+				continue;
+			}
 		}
 
 		if (mode === Mode.escape_unicode) {
