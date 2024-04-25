@@ -9,8 +9,6 @@ export const safe_regexp_template = /^[^`]*$/;
 export function print_token(token: string | symbol) {
 	if (typeof token === "symbol") {
 		return token.description;
-	} else if (token in constants) {
-		return constants[token];
 	} else if (safe_regexp.test(token)) {
 		return token;
 	} else if (safe_regexp_double.test(token)) {
