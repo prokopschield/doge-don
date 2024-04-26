@@ -1,4 +1,3 @@
-import { constants } from "./symbols";
 import { tokenizer } from "./tokenizer";
 
 export const safe_regexp = /^[!'()*-._~\d\w]+$/;
