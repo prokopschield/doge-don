@@ -1,8 +1,8 @@
 import { tokenizer } from "./tokenizer";
 
 export const safe_regexp = /^[!'()*-._~\d\w]+$/;
-export const safe_regexp_double = /^[^"\\]*$/;
-export const safe_regexp_single = /^[^']*$/;
+export const safe_regexp_double = /^[^"\p{C}\\]*$/;
+export const safe_regexp_single = /^[^'\p{C}]*$/;
 export const safe_regexp_template = /^[^`]*$/;
 
 export function print_token(token: string | symbol) {
