@@ -16,6 +16,7 @@ export enum Mode {
 	equals,
 	after_equals_newline_expect_comma,
 	after_equals_newline_comma_expect_expression,
+	comment,
 }
 
 export function* lexer(arg: string) {
@@ -83,6 +84,14 @@ export function* lexer(arg: string) {
 			}
 		}
 
+		if (mode === Mode.comment) {
+			if (c === "\n") {
+				mode = Mode.default;
+			} else {
+				continue;
+			}
+		}
+
 		switch (mode) {
 			case Mode.quoted: {
 				mode = Mode.default;
@@ -97,6 +106,11 @@ export function* lexer(arg: string) {
 			}
 
 			case Mode.default: {
+				if (c === "#") {
+					mode = Mode.comment;
+					continue;
+				}
+
 				if (!c.trim()) {
 					if (part) {
 						yield part;
