@@ -1,15 +1,7 @@
-import fs from "fs";
+import fs from "doge-fs";
 
 import { decode } from "./decode";
 
 export function read(filename: string) {
-	try {
-		return decode(
-			typeof window === "undefined" || typeof localStorage === "undefined"
-				? fs.readFileSync(filename, "utf-8")
-				: localStorage.getItem(filename) || ""
-		);
-	} catch {
-		return "";
-	}
+	return fs.read(filename).then(decode, () => "");
 }
