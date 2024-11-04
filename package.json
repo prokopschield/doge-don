@@ -1,22 +1,22 @@
 {
 	"name": "doge-don",
 	"description": "dodgy object notation",
-	"version": "0.1.0-14",
+	"version": "0.1.0-15",
 	"main": "lib/index.js",
 	"bin": {
 		"doge-don": "lib/cli.js"
 	},
 	"author": "Prokop Schield",
 	"dependencies": {
-		"doge-fs": "^0.1.0-2"
-	},
-	"devDependencies": {
-		"@types/node": "^18.19.40"
+		"doge-fs": "^0.1.0-3"
 	},
 	"keywords": [],
 	"license": "GPL-3.0-or-later",
 	"types": "./lib/index.d.ts",
 	"directories": {
 		"lib": "lib"
+	},
+	"devDependencies": {
+		"@types/node": "^22.8.7"
 	}
 }
