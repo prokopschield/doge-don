@@ -7,7 +7,7 @@ export function* formatter<T>(arg: T, indenter = "\t", newline = "\n") {
 	let indentation = 0;
 
 	for (const token of tokenizer(
-		typeof arg === "string" ? decode(arg) : arg
+		typeof arg === "string" ? decode(arg) : arg,
 	)) {
 		if (token === symbols["["]) {
 			yield "[";
@@ -37,7 +37,7 @@ export function* formatter_rc<T>(arg: T) {
 	let depth = 0;
 
 	for (const token of tokenizer(
-		typeof arg === "string" ? decode(arg) : arg
+		typeof arg === "string" ? decode(arg) : arg,
 	)) {
 		if (token === symbols["["]) {
 			if (depth++) {

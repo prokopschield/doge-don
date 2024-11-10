@@ -1,3 +1,4 @@
+import { lexer } from "./lexer";
 import { symbols } from "./symbols";
 
 export function* tokenizer(
@@ -6,6 +7,28 @@ export function* tokenizer(
 ): Generator<string | symbol, undefined, undefined> {
 	if (!arg || typeof arg !== "object") {
 		return yield String(arg);
+	}
+
+	for (const key of ["toDON", "toJSON"]) {
+		if (key in arg) {
+			try {
+				const transformed = arg[key]();
+
+				const tokens = [
+					...(typeof transformed === "string"
+						? lexer(transformed)
+						: tokenizer(transformed)),
+				];
+
+				for (const token of tokens) {
+					yield token;
+				}
+
+				return;
+			} catch {
+				// well, we gave it a fair shot
+			}
+		}
 	}
 
 	yield symbols["["];
